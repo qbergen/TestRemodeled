@@ -1,7 +1,9 @@
 package com.example.queenabergen.testremodeled;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import retrofit2.Call;
@@ -19,9 +21,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmenttransaction = fragmentManager.beginTransaction();
+        fragmenttransaction.replace(R.id.maincontainer, new NewFragment()).commit();
+
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://jsjrobotics.nyc/cgi-bin/")
+                .baseUrl("http://jsjrobotics.nyc/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -31,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "Success :" + response.body());
+                    Log.d(TAG, "Success :" + response.body().getAnimals().get(0).getName());
                 } else {
                     Log.d(TAG, "Error: Something Happened" + response.body().toString());
                 }
@@ -39,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Example> call, Throwable t) {
-
-
+                Log.d("Error", t.getMessage());
             }
         });
     }
